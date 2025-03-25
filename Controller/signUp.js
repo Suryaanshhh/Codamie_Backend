@@ -20,7 +20,7 @@ const signUp = async function (req, res) {
             await user.create({
                 Name: name,
                 Email: email,
-                pass: hash
+                Password: hash
             })
         })
 
@@ -30,3 +30,8 @@ const signUp = async function (req, res) {
     }
 
 }
+
+
+
+
+module.exports=signUp
