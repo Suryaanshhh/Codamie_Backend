@@ -6,14 +6,14 @@ const saltRound = 10
 
 const signUp = async function (req, res) {
     try {
-        const name = req.body.name
-        const email = req.body.email
-        const pass = req.body.password
+        const name = req.body.userName
+        const email = req.body.userEmail
+        const pass = req.body.userPassword
 
         const existedUser = await User.findOne({ where: { Email: email } })
 
         if (existedUser) {
-            res.json({ message: "User Already Exist" })
+           return res.json({ message: "User Already Exist" })
         }
 
         await bcrypt.hash(pass, saltRound, async (err, hash) => {
@@ -22,11 +22,10 @@ const signUp = async function (req, res) {
                 Email: email,
                 Password: hash
             })
+            return res.status(201).json({ message: "User Registered" })
         })
-
-        res.status(201).json({ message: "User Registered" })
     } catch (error) {
-        res.status(500).json({ message: "Something went wrong" })
+      return  res.status(500).json({ message: "Something went wrong" })
     }
 
 }
@@ -34,4 +33,4 @@ const signUp = async function (req, res) {
 
 
 
-module.exports=signUp
+module.exports = signUp
