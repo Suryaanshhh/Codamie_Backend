@@ -3,11 +3,14 @@ import bodyParser from "body-parser";
 import cors from "cors"
 import db from "./Database/mySql.js"
 import User from "./Model/user.js";
+import profile from "./Model/userProfile.js";
 import userRoute from "./Routes/userRoutes.js"
 
 const app = express();
 app.use(cors())
-db.sync()  // or { alter: true }
+User.hasOne(profile);
+profile.belongsTo(User)
+db.sync({force:true})  // or { alter: true }
   .then(() => {
     console.log("Database & tables created!");
   })
