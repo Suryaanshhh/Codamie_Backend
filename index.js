@@ -10,7 +10,7 @@ const app = express();
 app.use(cors())
 User.hasOne(profile);
 profile.belongsTo(User)
-db.sync({force:true})  // or { alter: true }
+db.sync()  // or { alter: true }
   .then(() => {
     console.log("Database & tables created!");
   })
