@@ -3,9 +3,10 @@ const User = require("../Model/user")
 
  const auth = (req, res, next) => {
     try {
-        const token = req.header("Authorisation")
+        const token = req.header("Authorization")
         const user = jwt.verify(token, "abra ka dabra")
-        User.findById(user.userId)
+        console.log(user)
+        User.findOne({where:{id:user.userID}})
             .then((user) => {
                 req.user = user;
                 next();

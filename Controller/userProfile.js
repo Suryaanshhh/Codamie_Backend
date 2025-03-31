@@ -5,23 +5,27 @@ const profileCreation = async (req, res, next) => {
     try {
         const emoji = req.body.Avatar
         const codingExperience = req.body.CodingExperience
-        const codingLanguage = req.body.codingLanguage
+        const CodingLanguage = req.body.CodingLanguage
         const int = req.body.Interest
         const about = req.body.Biodata
 
         await userProfile.create({
             Avatar: emoji,
             CodingExperience: codingExperience,
-            CodingLanguage: codingLanguage,
-            Interest: int,
-            Biodata: about
+            CodingLanguage: CodingLanguage,
+            Interest: int[0],
+            Biodata: about,
+            UserId: req.user.id
         })
-
+        res.status(201).json({ message: "profileCreated" })
     }
-    catch(err){
-        
+    catch (err) {
+        console.log(err)
+        res.status(500).json({ message: "something went wrong" })
     }
 }
+
+module.exports = profileCreation
 
 // const profile = {
 //     Avatar: selectedEmoji,
