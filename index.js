@@ -32,7 +32,7 @@ app.use("/auth", githubUserRoutes);
 
 
 
-db.sync()  // or { alter: true }
+db.sync({force:true})  // or { alter: true }
   .then(() => {
     console.log("Database & tables created!");
   })

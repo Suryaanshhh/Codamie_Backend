@@ -7,6 +7,10 @@ const User = sequelize.define("User", {
     autoIncrement: true,
     primaryKey: true
   },
+  githubID: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   Name: {
     type: DataTypes.STRING,
     allowNull: false
@@ -14,11 +18,11 @@ const User = sequelize.define("User", {
   Email: {
     type: DataTypes.STRING,
     unique: true,
-    allowNull: false
+    allowNull: true
   },
   Password: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   }
 });
 
