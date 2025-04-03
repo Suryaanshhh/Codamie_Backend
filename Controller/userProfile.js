@@ -8,6 +8,7 @@ const profileCreation = async (req, res, next) => {
         const CodingLanguage = req.body.CodingLanguage
         const int = req.body.Interest
         const about = req.body.Biodata
+        const gender=req.body.Gender
 
         await userProfile.create({
             Avatar: emoji,
@@ -15,7 +16,8 @@ const profileCreation = async (req, res, next) => {
             CodingLanguage: CodingLanguage,
             Interest: int[0],
             Biodata: about,
-            UserId: req.user.id
+            UserId: req.user.id,
+            Gender:gender
         })
         res.status(201).json({ message: "profileCreated" })
     }

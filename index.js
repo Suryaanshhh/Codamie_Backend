@@ -4,11 +4,13 @@ import cors from "cors"
 import db from "./Database/mySql.js"
 import User from "./Model/user.js";
 import profile from "./Model/userProfile.js";
+import matchesRequest from "./Model/matchesRequest.js";
 import userRoute from "./Routes/userRoutes.js"
 import session from "express-session";
 import passport from  "./Controller/githubAuth.js"
 import githubUserRoutes from "./Routes/githuUserRoutes.js"
-
+import homePageRoutes from "./Routes/homepage.js"
+import matchesRequestroutes from "./Routes/matchesRequestRoutes.js"
 
 
 // const session = require("express-session");
@@ -20,12 +22,17 @@ import githubUserRoutes from "./Routes/githuUserRoutes.js"
 
 const app = express();
 app.use(cors())
+
 User.hasOne(profile);
-profile.belongsTo(User)
+profile.belongsTo(User);
+User.hasMany(matchesRequest);
+matchesRequest.belongsTo(User);
+
 
 app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 app.use("/auth", githubUserRoutes);
 
@@ -39,6 +46,6 @@ db.sync({force:true})  // or { alter: true }
   .catch(err => console.error("Error syncing database:", err));
 app.use(bodyParser.json())
 app.use(userRoute)
-
-
+app.use(homePageRoutes)
+app.use(matchesRequestroutes)
 app.listen(3000)

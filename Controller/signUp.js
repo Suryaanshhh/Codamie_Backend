@@ -1,5 +1,4 @@
 const User = require("../Model/user")
-const user = require("../Model/user")
 const bcrypt = require("bcrypt")
 const saltRound = 10
 
@@ -17,7 +16,7 @@ const signUp = async function (req, res) {
         }
 
         await bcrypt.hash(pass, saltRound, async (err, hash) => {
-            await user.create({
+            await User.create({
                 Name: name,
                 Email: email,
                 Password: hash

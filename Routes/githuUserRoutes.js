@@ -22,6 +22,7 @@ router.get(
                     githubID: id
                 })
                 const token = await jwt.sign({ userID: newUser.dataValues.id }, "abra ka dabra")
+                
                 res.status(200).json({ token, message: "User Logged in" });
             }
 

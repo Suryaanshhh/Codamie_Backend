@@ -8,6 +8,10 @@ const profile = sequelize.define("Profile", {
         unique: true,
         primaryKey: true
     },
+    Gender:{
+        type:DataTypes.STRING,
+        allowNull:false
+    },
     Avatar: {
         type: DataTypes.STRING,
         allowNull: false
