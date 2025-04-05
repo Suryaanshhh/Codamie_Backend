@@ -9,6 +9,8 @@ router.post("/registerUser", signupController);
 
 router.post("/loginUser", loginController);
 
-router.post("/createUserProfile",authentication,profileCreationController)
+router.post("/createUserProfile",authentication,profileCreationController);
+
+
 
 module.exports = router
