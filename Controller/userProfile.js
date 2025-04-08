@@ -9,7 +9,7 @@ const profileCreation = async (req, res, next) => {
         const int = req.body.Interest
         const about = req.body.Biodata
         const gender=req.body.Gender
-
+        console.log(req.user.name)
         await userProfile.create({
             Avatar: emoji,
             CodingExperience: codingExperience,
@@ -17,7 +17,8 @@ const profileCreation = async (req, res, next) => {
             Interest: int[0],
             Biodata: about,
             UserId: req.user.id,
-            Gender:gender
+            Gender:gender,
+            Name:req.user.Name
         })
         res.status(201).json({ message: "profileCreated" })
     }

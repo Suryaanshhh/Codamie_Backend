@@ -1,6 +1,6 @@
 const User = require("../Model/user.js")
 const bcrypt = require("bcrypt")
-const { use } = require("../Routes/userRoutes")
+const userProfile=require("../Model/userProfile.js");
 const jwt = require("jsonwebtoken");
 
 
@@ -13,8 +13,15 @@ const login = async (req, res) => {
     if (user) {
         bcrypt.compare(pass, user.dataValues.Password, async function (err, result) {
             if (result == true) {
-                const token = await jwt.sign({userID:user.dataValues.id}, "abra ka dabra")
-                return res.status(200).json({jsonWebToken:token})
+                const profile=await userProfile.findOne({where:{userId:user.dataValues.id}})
+                if(profile){
+                    const token = await jwt.sign({userID:user.dataValues.id,profile:true}, "abra ka dabra")
+                    return res.status(200).json({jsonWebToken:token})
+                }
+                else{
+                    const token = await jwt.sign({userID:user.dataValues.id,profile:false}, "abra ka dabra")
+                    return res.status(200).json({jsonWebToken:token})
+                }
             }
             else {
                 return res.status(500).json({ message: "Incorrect Password" })
