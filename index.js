@@ -5,6 +5,8 @@ import db from "./Database/mySql.js"
 import User from "./Model/user.js";
 import profile from "./Model/userProfile.js";
 import matchesRequest from "./Model/matchesRequest.js";
+import userMatchesRoutes from "./Routes/userMatches.js"
+import userMatches from "./Model/matches.js"
 import userRoute from "./Routes/userRoutes.js"
 import session from "express-session";
 import passport from  "./Controller/githubAuth.js"
@@ -27,7 +29,8 @@ User.hasOne(profile);
 profile.belongsTo(User);
 User.hasMany(matchesRequest);
 matchesRequest.belongsTo(User);
-
+User.hasMany(userMatches);
+userMatches.belongsTo(User)
 
 app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
@@ -48,4 +51,7 @@ app.use(bodyParser.json())
 app.use(userRoute)
 app.use(homePageRoutes)
 app.use(matchesRequestroutes)
+app.use(userMatchesRoutes)
+
+
 app.listen(3000)

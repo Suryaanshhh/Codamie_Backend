@@ -4,11 +4,11 @@ const userProfile=require("../Model/userProfile")
 const matchRequestCreate = async (req, res) => {
     try {
         const uID = req.body.UserId
-        console.log(req.body)
+        
         await matchesRequest.create({
             personId: uID,
             state: "Pending",
-            UserId: req.User.id
+            UserId: req.user.id
         })
         res.status(201).json({ message: "request sent !" })
     }
@@ -53,7 +53,9 @@ const matchRequestReject = async (req, res) => {
 const showMatches = async (req, res) => {
     try {
         const uId = req.user.id
-        let allMatches = await userProfile.findAll({ where: { UserId: uId } })
+        let allMatchesRequest = await matchesRequest.findAll({ where: { UserId: uId } })
+        console.log(allMatchesRequest)
+        let allMatches=await 
         res.status(200).json({ allMatches })
     } catch (err) {
         console.log(err)
