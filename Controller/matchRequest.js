@@ -6,9 +6,9 @@ const matchRequestCreate = async (req, res) => {
         const uID = req.body.UserId
         
         await matchesRequest.create({
-            personId: uID,
+            personId: req.user.id,
             state: "Pending",
-            UserId: req.user.id
+            UserId: uID
         })
         res.status(201).json({ message: "request sent !" })
     }
@@ -51,12 +51,14 @@ const matchRequestReject = async (req, res) => {
 
 
 const showMatches = async (req, res) => {
+    const token = req.header("Authorization")
     try {
         const uId = req.user.id
         let allMatchesRequest = await matchesRequest.findAll({ where: { UserId: uId } })
-        console.log(allMatchesRequest)
-        let allMatches=await 
-        res.status(200).json({ allMatches })
+        if(allMatchesRequest){
+            let allMatches=await userProfile.findAll({where:{userId:allMatchesRequest[0].dataValues.personId}})
+            res.status(200).json({ allMatches ,token})
+        }
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: "something went wrong", err })

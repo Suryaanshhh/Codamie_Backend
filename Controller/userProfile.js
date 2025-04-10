@@ -2,6 +2,7 @@ const User = require("../Model/user");
 const userProfile = require("../Model/userProfile");
 
 const profileCreation = async (req, res, next) => {
+    const token = req.header("Authorization")
     try {
         const emoji = req.body.Avatar
         const codingExperience = req.body.CodingExperience
@@ -20,7 +21,7 @@ const profileCreation = async (req, res, next) => {
             Gender:gender,
             Name:req.user.Name
         })
-        res.status(201).json({ message: "profileCreated" })
+        res.status(201).json({ message: "profileCreated",token})
     }
     catch (err) {
         console.log(err)
