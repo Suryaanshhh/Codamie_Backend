@@ -5,17 +5,17 @@ const profileCreation = async (req, res, next) => {
     const token = req.header("Authorization")
     try {
         const emoji = req.body.Avatar
-        const codingExperience = req.body.CodingExperience
+        const age= req.body.Age
         const CodingLanguage = req.body.CodingLanguage
-        const int = req.body.Interest
+        const devType=req.body.Forte
         const about = req.body.Biodata
         const gender=req.body.Gender
         console.log(req.user.name)
         await userProfile.create({
             Avatar: emoji,
-            CodingExperience: codingExperience,
+            Age:age,
+            devType:devType,
             CodingLanguage: CodingLanguage,
-            Interest: int[0],
             Biodata: about,
             UserId: req.user.id,
             Gender:gender,

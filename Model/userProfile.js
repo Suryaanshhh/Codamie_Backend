@@ -16,19 +16,19 @@ const profile = sequelize.define("Profile", {
         type:DataTypes.STRING,
         allowNull:false
     },
+    Age:{
+        type:DataTypes.INTEGER,
+        allowNull:false
+    },
     Avatar: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    CodingExperience: {
-        type: DataTypes.STRING,
-        allowNull: false,
     },
     CodingLanguage: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    Interest: {
+    devType: {
         type: DataTypes.STRING,
         allowNull: false
     },

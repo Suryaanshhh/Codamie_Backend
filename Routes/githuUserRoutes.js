@@ -23,7 +23,7 @@ router.get(
                 })
                 const token = await jwt.sign({ userID: newUser.dataValues.id }, "abra ka dabra")
                 
-                res.redirect(`http://localhost:5173/userProfile?token=${token}`);
+                res.redirect(`http://localhost:5173/createProfile?token=${token}`);
             }
 
             else {
