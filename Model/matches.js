@@ -12,6 +12,14 @@ const matches=sequelize.define("UserMatches",{
     Name:{
         type:DataTypes.STRING,
         allowNull:false
+    },
+    Description:{
+        type:DataTypes.STRING,
+        allowNull:false
+    },
+    Icon:{
+        type:DataTypes.STRING,
+        allowNull:false
     }
 })
 

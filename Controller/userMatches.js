@@ -4,9 +4,12 @@ const userMatches = require("../Model/matches.js")
 
 const addMatch = async (req, res) => {
     try {
+        console.log("match user id is :",req.user.id)
         await userMatches.create({
             Name: req.body.name,
-            userId: req.user.id
+            Description:req.body.description,
+            Icon:req.body.icon,
+            UserId: req.user.id
         })
         res.status(201).json({ message: "match added !!" })
     }

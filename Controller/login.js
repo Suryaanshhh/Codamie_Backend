@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 
 
 const login = async (req, res) => {
+    console.log(req.body)
     const mail = req.body.userEmail
     const pass = req.body.userPassword
 
