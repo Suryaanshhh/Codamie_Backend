@@ -1,16 +1,26 @@
 const matchesRequest = require("../Model/matchesRequest.js");
 
 const userMatches = require("../Model/matches.js")
+const{jwtDecode}=require("jwt-decode")
 
 const addMatch = async (req, res) => {
     try {
-        console.log("match user id is :",req.user.id)
         await userMatches.create({
-            Name: req.body.name,
-            Description:req.body.description,
-            Icon:req.body.icon,
-            UserId: req.user.id
+            User1: req.user.id,
+            User2: req.body.UserId,
+            User1Name: req.user.Name,
+            User2Name: req.body.Name
         })
+        await matchesRequest.update(
+            { state: "Accepted" },
+            {
+                where: {
+                    personId: req.user.id,
+                    UserId: req.body.UserId
+                }
+            }
+        )
+
         res.status(201).json({ message: "match added !!" })
     }
     catch (err) {
@@ -19,19 +29,36 @@ const addMatch = async (req, res) => {
     }
 }
 
-const removeMatch=async(req,res)=>{
-    try{
+const removeMatch = async (req, res) => {
+    try {
         await matchesRequest.destroy({
-            where :{
-                personId:req.body.personId
+            where: {
+                personId: req.body.personId
             }
         })
         res.status(200).json({ message: "match deleted !!" })
     }
-    catch(err){
+    catch (err) {
         console.log(err)
         res.status(500).json({ message: "Something went wrong" })
     }
 }
 
-module.exports={addMatch,removeMatch}
+const matchList=async(req,res)=>{
+    const token = req.header("Authorization")
+    const decodedToken = jwtDecode(token)
+    console.log(decodedToken)
+    try {
+        userMatches.findAll({ where: { User1: decodedToken.userID } })
+            .then((matches) => {
+                res.status(200).json({ matches })
+            })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: "something went wrong", err })
+    }
+}
+
+
+
+module.exports = { addMatch, removeMatch,matchList }

@@ -1,26 +1,30 @@
-const { DataTypes}=require("sequelize");
-const sequelize=require("../Database/mySql");
+const { DataTypes } = require("sequelize");
+const sequelize = require("../Database/mySql");
 
-const matches=sequelize.define("UserMatches",{
-    id:{
-        type:DataTypes.INTEGER,
-        primaryKey:true,
-        unique:true,
-        allowNull:false,
-        autoIncrement:true
+const matches = sequelize.define("UserMatches", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        unique: true,
+        allowNull: false,
+        autoIncrement: true
     },
-    Name:{
-        type:DataTypes.STRING,
-        allowNull:false
+    User1: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     },
-    Description:{
-        type:DataTypes.STRING,
-        allowNull:false
+    User2: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     },
-    Icon:{
-        type:DataTypes.STRING,
-        allowNull:false
-    }
+    User1Name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    User2Name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
 })
 
-module.exports=matches
+module.exports = matches

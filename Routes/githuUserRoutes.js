@@ -28,7 +28,7 @@ router.get(
 
             else {
                 const token = await jwt.sign({ userID: user.dataValues.id }, "abra ka dabra")
-                res.redirect(`http://localhost:5173/homePage?token=${token}`);
+                res.redirect(`http://localhost:5173/home?token=${token}`);
             }
         }
         catch (err) {

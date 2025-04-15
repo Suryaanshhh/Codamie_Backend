@@ -1,14 +1,13 @@
 const User = require("../Model/user")
 const matchesRequest = require("../Model/matchesRequest");
 const userProfile=require("../Model/userProfile")
+
 const matchRequestCreate = async (req, res) => {
     try {
-        const uID = req.body.UserId
-        
         await matchesRequest.create({
-            personId: req.user.id,
+            personId: req.body.id,
             state: "Pending",
-            UserId: uID
+            UserId: req.user.id
         })
         res.status(201).json({ message: "request sent !" })
     }
@@ -54,9 +53,9 @@ const showMatches = async (req, res) => {
     const token = req.header("Authorization")
     try {
         const uId = req.user.id
-        let allMatchesRequest = await matchesRequest.findAll({ where: { UserId: uId } })
+        let allMatchesRequest = await matchesRequest.findAll({ where: {personId: uId ,state:"Pending"} })
         if(allMatchesRequest){
-            let allMatches=await userProfile.findAll({where:{userId:allMatchesRequest[0].dataValues.personId}})
+            let allMatches=await userProfile.findAll({where:{userId:allMatchesRequest[0].dataValues.UserId}})
             res.status(200).json({ allMatches ,token})
         }
     } catch (err) {
@@ -64,6 +63,10 @@ const showMatches = async (req, res) => {
         res.status(500).json({ message: "something went wrong", err })
     }
 }
+
+
+
+
 
 module.exports = {
     matchRequestCreate, matchRequestAccept, matchRequestReject, showMatches
