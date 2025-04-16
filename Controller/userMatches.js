@@ -1,7 +1,7 @@
 const matchesRequest = require("../Model/matchesRequest.js");
-
+const { Op } = require('sequelize');
 const userMatches = require("../Model/matches.js")
-const{jwtDecode}=require("jwt-decode")
+const { jwtDecode } = require("jwt-decode")
 
 const addMatch = async (req, res) => {
     try {
@@ -44,14 +44,21 @@ const removeMatch = async (req, res) => {
     }
 }
 
-const matchList=async(req,res)=>{
+const matchList = async (req, res) => {
     const token = req.header("Authorization")
     const decodedToken = jwtDecode(token)
     console.log(decodedToken)
     try {
-        userMatches.findAll({ where: { User1: decodedToken.userID } })
+        userMatches.findAll({
+            where: {
+                [Op.or]: [
+                    { User1: decodedToken.userID },
+                    { User2: decodedToken.userID }
+                ]
+            }
+        })
             .then((matches) => {
-                res.status(200).json({ matches })
+                res.status(200).json({ matches });
             })
     } catch (err) {
         console.log(err)
@@ -61,4 +68,4 @@ const matchList=async(req,res)=>{
 
 
 
-module.exports = { addMatch, removeMatch,matchList }
+module.exports = { addMatch, removeMatch, matchList }

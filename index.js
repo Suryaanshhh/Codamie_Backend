@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors"
+import { Server } from "socket.io";
 import db from "./Database/mySql.js"
 import User from "./Model/user.js";
 import profile from "./Model/userProfile.js";
@@ -9,7 +10,7 @@ import userMatchesRoutes from "./Routes/userMatches.js"
 import userMatches from "./Model/matches.js"
 import userRoute from "./Routes/userRoutes.js"
 import session from "express-session";
-import passport from  "./Controller/githubAuth.js"
+import passport from "./Controller/githubAuth.js"
 import githubUserRoutes from "./Routes/githuUserRoutes.js"
 import homePageRoutes from "./Routes/homepage.js"
 import matchesRequestroutes from "./Routes/matchesRequestRoutes.js"
@@ -25,18 +26,26 @@ import matchesRequestroutes from "./Routes/matchesRequestRoutes.js"
 const app = express();
 app.use(cors())
 
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000", // Your frontend URL
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
+
 User.hasOne(profile);
 profile.belongsTo(User);
 User.hasMany(matchesRequest);
 matchesRequest.belongsTo(User);
-User.hasMany(userMatches);
-userMatches.belongsTo(User)
+
 
 app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
-
-
 app.use("/auth", githubUserRoutes);
 
 
@@ -54,4 +63,4 @@ app.use(matchesRequestroutes)
 app.use(userMatchesRoutes)
 
 
-app.listen(3000)
+server.listen(3000)
