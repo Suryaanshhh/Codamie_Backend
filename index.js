@@ -1,4 +1,5 @@
 import express from "express";
+import http from "http";
 import bodyParser from "body-parser";
 import cors from "cors"
 import { Server } from "socket.io";
@@ -14,6 +15,8 @@ import passport from "./Controller/githubAuth.js"
 import githubUserRoutes from "./Routes/githuUserRoutes.js"
 import homePageRoutes from "./Routes/homepage.js"
 import matchesRequestroutes from "./Routes/matchesRequestRoutes.js"
+import messageRoutes from "./Routes/messageRoutes.js"
+import setupSocketServer from "./Middlewares/sockets.js"
 
 
 // const session = require("express-session");
@@ -28,13 +31,7 @@ app.use(cors())
 
 const server = http.createServer(app);
 
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:3000", // Your frontend URL
-    methods: ["GET", "POST"],
-    credentials: true
-  }
-});
+const io = setupSocketServer(server);
 
 
 User.hasOne(profile);
@@ -61,6 +58,7 @@ app.use(userRoute)
 app.use(homePageRoutes)
 app.use(matchesRequestroutes)
 app.use(userMatchesRoutes)
+app.use(messageRoutes)
 
 
 server.listen(3000)

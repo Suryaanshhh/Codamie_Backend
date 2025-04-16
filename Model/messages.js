@@ -33,4 +33,4 @@ const Message = sequelize.define('Message', {
     ]
   });
 
-  modusle.exports = Message;
+  module.exports = Message;
