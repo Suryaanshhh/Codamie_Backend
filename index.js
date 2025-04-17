@@ -23,20 +23,22 @@ const cron = require("node-cron");
 const app = express();
 
 // Handle OPTIONS requests (CORS Preflight)
-app.use((req, res, next) => {
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();  // Respond to OPTIONS request without redirect
-  }
-  next();
+app.options('*', (req, res) => {
+  res.status(200).send();   // Respond with status code 200, no redirect
 });
 
-// CORS Middleware (Now handles the preflight properly)
-app.use(cors({
-  origin: "http://localhost:5173",  // Frontend URL
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],  // Include OPTIONS method
-  allowedHeaders: ["Content-Type", "Authorization"],  // Headers for preflight
-  credentials: true,  // If you need to handle cookies or sessions
-}));
+const corsOptions = {
+  origin: "http://localhost:5173",    // Your frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,    // Allow cookies, if necessary
+  preflightContinue: false,   // Explicitly stop the request from continuing after preflight
+  optionsSuccessStatus: 200  // Force 200 status code instead of redirects for preflight
+};
+
+// Apply the CORS middleware
+app.use(cors(corsOptions));
+
 
 // Passport Authentication Middleware
 app.use(session({
