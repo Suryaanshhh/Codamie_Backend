@@ -5,6 +5,21 @@ const { jwtDecode } = require("jwt-decode")
 
 const addMatch = async (req, res) => {
     try {
+
+
+        const existedMatch = await userMatches.findOne({
+            where: {
+                [Op.or]: [
+                    { User1: req.user.id, User2: req.body.UserId },
+                    { User1: req.body.UserId, User2: req.user.id }
+                ]
+            }
+        })
+
+        if (existedMatch) {
+            return res.status(400).json({ message: "Match already exists" })
+        }
+      else{
         await userMatches.create({
             User1: req.user.id,
             User2: req.body.UserId,
@@ -22,6 +37,7 @@ const addMatch = async (req, res) => {
         )
 
         res.status(201).json({ message: "match added !!" })
+      }
     }
     catch (err) {
         console.log(err)
