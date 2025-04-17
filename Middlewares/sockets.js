@@ -8,7 +8,7 @@ function setupSocketServer(server) {
   const io = new Server(server,{
     cors: {
         // Allow connections from your frontend origin
-        origin: ["http://localhost:5173", "http://localhost:3000"], // Add all your frontend origins
+        origin: ["http://localhost:5173", "http://codamie_backend.railway.internal"], // Add all your frontend origins
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
         credentials: true
