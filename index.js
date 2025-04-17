@@ -31,7 +31,7 @@ const server = http.createServer(app);
 const io = setupSocketServer(server);
 
 // --- MIDDLEWARES ---
-
+app.options('*', cors());
 // ✅ CORS must be first
 app.use(cors({
   origin: "http://localhost:5173",   // or your frontend URL in production
@@ -40,7 +40,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-app.options('*', cors());
+
 
 // ✅ Trust proxy if deploying (needed for Railway/Render/Heroku)
 app.set('trust proxy', 1);
