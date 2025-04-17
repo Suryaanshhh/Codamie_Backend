@@ -7,66 +7,57 @@ const jwt = require("jsonwebtoken");
 router.get("/github", passport.authenticate("github", { scope: ["user:email"] }));
 
 
+
 router.get(
     "/github/callback",
-    (req, res, next) => {
-        // Handle the authentication without redirect
-        passport.authenticate("github", (err, user, info) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send("Authentication error");
-            }
-            
+    passport.authenticate("github", { failureRedirect: "/" }),
+    async (req, res) => {
+        try {
+            const { id, displayName } = req.user;
+            let user = await User.findOne({ where: { githubID: id } });
+            let token;
+            let redirectPath;
+
             if (!user) {
-                return res.redirect("/"); // Failure case
+                let newUser = await User.create({
+                    Name: displayName,
+                    githubID: id
+                });
+                token = await jwt.sign({ userID: newUser.dataValues.id }, "abra ka dabra");
+                redirectPath = "createProfile";
+            } else {
+                token = await jwt.sign({ userID: user.dataValues.id }, "abra ka dabra");
+                redirectPath = "home";
             }
-            
-            req.login(user, async (err) => {
-                if (err) return next(err);
-                
-                try {
-                    const { id, displayName } = user;
-                    let dbUser = await User.findOne({ where: { githubID: id } });
-                    let token;
-                    let redirectPath;
 
-                    if (!dbUser) {
-                        let newUser = await User.create({
-                            Name: displayName,
-                            githubID: id
-                        });
-                        token = jwt.sign({ userID: newUser.dataValues.id }, "abra ka dabra");
-                        redirectPath = "createProfile";
-                    } else {
-                        token = jwt.sign({ userID: dbUser.dataValues.id }, "abra ka dabra");
-                        redirectPath = "home";
-                    }
-
-                    // Return an HTML page that will handle the redirect client-side
-                    res.send(`
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <title>Authentication Successful</title>
-                        </head>
-                        <body>
-                            <p>Authentication successful. Redirecting...</p>
-                            <script>
-                                // Store token in localStorage
-                                localStorage.setItem('auth_token', '${token}');
-                                
-                                // Redirect to the appropriate page
-                                window.location.href = 'http://localhost:5173/${redirectPath}';
-                            </script>
-                        </body>
-                        </html>
-                    `);
-                } catch (err) {
-                    console.error(err);
-                    res.status(500).send("Something went wrong");
-                }
-            });
-        })(req, res, next);
+            // Send an HTML page that uses postMessage to communicate with the parent window
+            res.send(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Authentication Complete</title>
+                </head>
+                <body>
+                    <script>
+                        // Send message to the parent window with token info
+                        window.opener.postMessage(
+                            { 
+                                token: '${token}',
+                                redirectPath: '${redirectPath}' 
+                            }, 
+                            'http://localhost:5173'
+                        );
+                        // Close this popup window
+                        window.close();
+                    </script>
+                    <p>Authentication successful! You can close this window.</p>
+                </body>
+                </html>
+            `);
+        } catch (err) {
+            console.log(err);
+            res.status(500).send("Something went wrong");
+        }
     }
 );
 // router.get("/profile", (req, res) => {
