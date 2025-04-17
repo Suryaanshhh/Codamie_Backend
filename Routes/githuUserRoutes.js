@@ -15,21 +15,24 @@ router.get(
         const { id, displayName } = req.user;
         let user = await User.findOne({ where: { githubID: id } });
   
+        let isNewUser = false;
+  
         if (!user) {
           user = await User.create({
             Name: displayName,
             githubID: id
           });
+          isNewUser = true;
         }
   
         const token = jwt.sign({ userID: user.dataValues.id }, "abra ka dabra");
   
-        // Redirect only if from browser
-        const redirectURL = user.isNewRecord
-          ? `http://localhost:5173/createProfile?token=${token}`
-          : `http://localhost:5173/home?token=${token}`;
+        // ✅ Return token + flag in JSON (no redirect)
+        return res.status(200).json({
+          token,
+          isNewUser
+        });
   
-        return res.redirect(redirectURL);
       } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "something went wrong" });
