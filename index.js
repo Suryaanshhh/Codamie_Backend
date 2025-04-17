@@ -16,6 +16,7 @@ import githubUserRoutes from "./Routes/githuUserRoutes.js"
 import homePageRoutes from "./Routes/homepage.js"
 import matchesRequestroutes from "./Routes/matchesRequestRoutes.js"
 import messageRoutes from "./Routes/messageRoutes.js"
+import aiBotRoutes from "./Routes/botRoutes.js"
 import setupSocketServer from "./Middlewares/sockets.js"
 
 
@@ -59,6 +60,7 @@ app.use(homePageRoutes)
 app.use(matchesRequestroutes)
 app.use(userMatchesRoutes)
 app.use(messageRoutes)
+app.use(aiBotRoutes)
 
 
 server.listen(3000)
