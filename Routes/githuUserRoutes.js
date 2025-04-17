@@ -43,7 +43,7 @@ router.get(
                 token: '${token}',
                 redirectPath: '${redirectPath}'
               },
-              'http://localhost:5173'  // Change this to your frontend domain in production
+              'https://codamie-frontend.vercel.app'  // Change this to your frontend domain in production
             );
             window.close();
           </script>
