@@ -8,57 +8,54 @@ router.get("/github", passport.authenticate("github", { scope: ["user:email"] })
 
 
 
+router.get("/github", passport.authenticate("github", { scope: ["user:email"] }));
+
 router.get(
-    "/github/callback",
-    passport.authenticate("github", { failureRedirect: "/" }),
-    async (req, res) => {
-        try {
-            const { id, displayName } = req.user;
-            let user = await User.findOne({ where: { githubID: id } });
-            let token;
-            let redirectPath;
+  "/github/callback",
+  passport.authenticate("github", { failureRedirect: "/" }),
+  async (req, res) => {
+    try {
+      const { id, displayName } = req.user;
 
-            if (!user) {
-                let newUser = await User.create({
-                    Name: displayName,
-                    githubID: id
-                });
-                token = await jwt.sign({ userID: newUser.dataValues.id }, "abra ka dabra");
-                redirectPath = "createProfile";
-            } else {
-                token = await jwt.sign({ userID: user.dataValues.id }, "abra ka dabra");
-                redirectPath = "home";
-            }
+      let user = await User.findOne({ where: { githubID: id } });
 
-            // Send an HTML page that uses postMessage to communicate with the parent window
-            res.send(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Authentication Complete</title>
-                </head>
-                <body>
-                    <script>
-                        // Send message to the parent window with token info
-                        window.opener.postMessage(
-                            { 
-                                token: '${token}',
-                                redirectPath: '${redirectPath}' 
-                            }, 
-                            'http://localhost:5173'
-                        );
-                        // Close this popup window
-                        window.close();
-                    </script>
-                    <p>Authentication successful! You can close this window.</p>
-                </body>
-                </html>
-            `);
-        } catch (err) {
-            console.log(err);
-            res.status(500).send("Something went wrong");
-        }
+      let isNewUser = false;
+      if (!user) {
+        user = await User.create({
+          Name: displayName,
+          githubID: id
+        });
+        isNewUser = true;
+      }
+
+      const token = jwt.sign({ userID: user.dataValues.id }, "abra ka dabra");
+      const redirectPath = isNewUser ? "createProfile" : "home";
+
+      // IMPORTANT: Send a message back to the frontend opener window using postMessage
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head><title>Logging in...</title></head>
+        <body>
+          <script>
+            window.opener.postMessage(
+              {
+                token: '${token}',
+                redirectPath: '${redirectPath}'
+              },
+              'http://localhost:5173'  // Change this to your frontend domain in production
+            );
+            window.close();
+          </script>
+          <p>Authentication successful! You can close this window.</p>
+        </body>
+        </html>
+      `);
+    } catch (err) {
+      console.error("GitHub callback error:", err);
+      res.status(500).send("Something went wrong during authentication.");
     }
+  }
 );
 // router.get("/profile", (req, res) => {
 //     if (!req.isAuthenticated()) return res.redirect("/");

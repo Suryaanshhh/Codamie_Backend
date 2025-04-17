@@ -2,80 +2,106 @@ const express = require("express");
 const http = require("http");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const { Server } = require("socket.io");
-const db = require("./Database/mySql");
-const User = require("./Model/user");
-const profile = require("./Model/userProfile");
-const matchesRequest = require("./Model/matchesRequest");
-const userMatchesRoutes = require("./Routes/userMatches");
-const userMatches = require("./Model/matches");
-const userRoute = require("./Routes/userRoutes");
 const session = require("express-session");
 const passport = require("./Controller/githubAuth");
+const db = require("./Database/mySql");
+
+// Models
+const User = require("./Model/user");
+const Profile = require("./Model/userProfile");
+const MatchesRequest = require("./Model/matchesRequest");
+
+// Routes
+const userRoute = require("./Routes/userRoutes");
 const githubUserRoutes = require("./Routes/githuUserRoutes");
 const homePageRoutes = require("./Routes/homepage");
-const matchesRequestroutes = require("./Routes/matchesRequestRoutes");
+const matchesRequestRoutes = require("./Routes/matchesRequestRoutes");
+const userMatchesRoutes = require("./Routes/userMatches");
 const messageRoutes = require("./Routes/messageRoutes");
 const aiBotRoutes = require("./Routes/botRoutes");
+
+// Sockets and Cron
+const { Server } = require("socket.io");
 const setupSocketServer = require("./Middlewares/sockets");
 const cron = require("node-cron");
 
+// Initialize app
 const app = express();
+const server = http.createServer(app);
+const io = setupSocketServer(server);
+
+// --- MIDDLEWARES ---
+
+// ✅ CORS must be first
 app.use(cors({
-  origin: "http://localhost:5173",        
+  origin: "http://localhost:5173",   // or your frontend URL in production
+  credentials: true,                 // Allow cookies/session across domains
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.options('*', cors());
 
+// ✅ Trust proxy if deploying (needed for Railway/Render/Heroku)
+app.set('trust proxy', 1);
+
+// Body parser
+app.use(bodyParser.json());
+
+// Logger (optional)
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
 });
 
-const server = http.createServer(app);
-const io = setupSocketServer(server);
-
-// Sequelize Relationships
-User.hasOne(profile);
-profile.belongsTo(User);
-User.hasMany(matchesRequest);
-matchesRequest.belongsTo(User);
-
-// Sessions and Passport
+// Session
 app.use(session({ 
-  secret: process.env.SESSION_SECRET, 
+  secret: process.env.SESSION_SECRET || "defaultsecret", 
   resave: false, 
   saveUninitialized: true 
 }));
+
+// Passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+// --- MODELS RELATIONSHIPS ---
+
+User.hasOne(Profile);
+Profile.belongsTo(User);
+
+User.hasMany(MatchesRequest);
+MatchesRequest.belongsTo(User);
+
+// --- ROUTES ---
+
 app.use("/auth", githubUserRoutes);
-
-// Sync DB
-db.sync()
-  .then(() => {
-    console.log("Database & tables created!");
-  })
-  .catch(err => console.error("Error syncing database:", err));
-
-// Routes
-app.use(bodyParser.json());
 app.use(userRoute);
 app.use(homePageRoutes);
-app.use(matchesRequestroutes);
+app.use(matchesRequestRoutes);
 app.use(userMatchesRoutes);
 app.use(messageRoutes);
 app.use(aiBotRoutes);
 
-// Cron job
+// --- DATABASE SYNC ---
+
+db.sync()
+  .then(() => {
+    console.log("✅ Database synced successfully");
+  })
+  .catch((err) => {
+    console.error("❌ Database sync error:", err);
+  });
+
+// --- CRON JOBS ---
+
 cron.schedule('*/10 * * * *', () => {
-  console.log('Running a task every 10 minutes');
+  console.log('Running cron job every 10 minutes...');
 });
 
-// Start server
+// --- START SERVER ---
+
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`✅ Server is running on port ${PORT}`);
 });
