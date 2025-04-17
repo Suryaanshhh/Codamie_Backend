@@ -21,7 +21,11 @@ const setupSocketServer = require("./Middlewares/sockets");
 const cron = require("node-cron");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",        
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 const server = http.createServer(app);
 const io = setupSocketServer(server);
