@@ -18,6 +18,7 @@ import matchesRequestroutes from "./Routes/matchesRequestRoutes.js"
 import messageRoutes from "./Routes/messageRoutes.js"
 import aiBotRoutes from "./Routes/botRoutes.js"
 import setupSocketServer from "./Middlewares/sockets.js"
+import cron from "node-cron"
 
 
 // const session = require("express-session");
@@ -62,5 +63,9 @@ app.use(userMatchesRoutes)
 app.use(messageRoutes)
 app.use(aiBotRoutes)
 
+
+cron.schedule('*/10 * * * *', () => {
+  console.log('running a task every two minutes');
+});
 
 server.listen(3000)

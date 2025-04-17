@@ -1,4 +1,5 @@
 const axios = require('axios');
+require('dotenv').config();
 const aiBot = async (req, res) => {
     try {
       const { message, conversationHistory } = req.body;
