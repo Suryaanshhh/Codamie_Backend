@@ -8,7 +8,7 @@ function setupSocketServer(server) {
   const io = new Server(server,{
     cors: {
         // Allow connections from your frontend origin
-        origin: ["http://localhost:5173", "http://codamie-backend.onrender.com"], // Add all your frontend origins
+        origin: ["https://codamie-frontend.vercel.app", "http://codamie-backend.onrender.com"], // Add all your frontend origins
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
         credentials: true
