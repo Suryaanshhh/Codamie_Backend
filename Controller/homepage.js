@@ -14,7 +14,7 @@ const findProfiles = async (req, res) => {
                                 WHEN User1 = ${req.user.id} THEN User2 
                                 ELSE User1 
                             END 
-                        FROM userMatches 
+                        FROM UserMatches 
                         WHERE User1 = ${req.user.id} OR User2 = ${req.user.id}
                     )`)
                 }
