@@ -20,22 +20,24 @@ router.get(
         if (!user) {
           user = await User.create({
             Name: displayName,
-            githubID: id
+            githubID: id,
           });
           isNewUser = true;
         }
   
         const token = jwt.sign({ userID: user.dataValues.id }, "abra ka dabra");
   
-        // ✅ Return token + flag in JSON (no redirect)
-        return res.status(200).json({
-          token,
-          isNewUser
-        });
-  
+        // ✅ Return a script that sets localStorage and closes the popup
+        return res.send(`
+          <script>
+            localStorage.setItem("githubToken", "${token}");
+            localStorage.setItem("isNewUser", "${isNewUser}");
+            window.close();
+          </script>
+        `);
       } catch (err) {
         console.error(err);
-        return res.status(500).json({ message: "something went wrong" });
+        return res.status(500).send("Something went wrong");
       }
     }
   );
