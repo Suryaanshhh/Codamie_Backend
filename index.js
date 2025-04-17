@@ -65,5 +65,5 @@ cron.schedule('*/10 * * * *', () => {
 
 // Start server
 server.listen(3000, () => {
-  console.log("Server running on http://codamie_backend.railway.internal");
+  console.log("Server running on http://codamiebackend-production.up.railway.app");
 });
