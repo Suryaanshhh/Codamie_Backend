@@ -27,6 +27,11 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
 const server = http.createServer(app);
 const io = setupSocketServer(server);
 
@@ -68,6 +73,7 @@ cron.schedule('*/10 * * * *', () => {
 });
 
 // Start server
-server.listen(3000, () => {
-  console.log("Server running on http://codamiebackend-production.up.railway.app");
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
