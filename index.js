@@ -77,7 +77,7 @@ User.hasMany(matchesRequest);
 matchesRequest.belongsTo(User);
 
 // ✅ Database Sync
-db.sync({force:true})
+db.sync()
   .then(() => {
     console.log("✅ Database & tables synced");
   })
